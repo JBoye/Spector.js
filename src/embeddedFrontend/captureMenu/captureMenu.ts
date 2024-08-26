@@ -145,7 +145,18 @@ export class CaptureMenu {
     public trackPageCanvases(): void {
         this.isTrackingCanvas = true;
         if (document.body) {
-            const canvases = document.body.querySelectorAll("canvas");
+            const querySelectorAll = (node,selector) => {
+                const nodes = [...node.querySelectorAll(selector)],
+                    nodeIterator = document.createNodeIterator(node, Node.ELEMENT_NODE);
+                let currentNode;
+                while (currentNode = nodeIterator.nextNode()) {
+                    if(currentNode.shadowRoot) {
+                        nodes.push(...querySelectorAll(currentNode.shadowRoot,selector));
+                    }
+                }
+                return nodes;
+            }
+            const canvases = querySelectorAll(document.body, "canvas");
             this.updateCanvasesList(canvases);
         }
     }
